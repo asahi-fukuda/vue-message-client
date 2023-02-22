@@ -1,0 +1,76 @@
+openapi: 3.0.1
+info:
+  version: 1.0.0
+  title: Message API
+
+paths:
+  /messages:
+    get:
+      summary: Get all messages
+      operationId: getMessages
+      responses:
+        '200':
+          description: A list of all messages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Message'
+    post:
+      summary: Create a new message
+      operationId: createMessage
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewMessage'
+      responses:
+        '201':
+          description: The created message
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+
+components:
+  schemas:
+    NewMessage:
+      type: object
+      properties:
+        name:
+          type: string
+        message:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      required:
+        - name
+        - message
+        - created_at
+        - updated_at
+    Message:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        message:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - message
+        - created_at
+        - updated_at
