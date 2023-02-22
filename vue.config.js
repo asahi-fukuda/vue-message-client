@@ -7,4 +7,7 @@ module.exports = defineConfig({
       poll: 1000,
     },
   },
+  devServer: {
+    port: 3000,
+  },
 })
