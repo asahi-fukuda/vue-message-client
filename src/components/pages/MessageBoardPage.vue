@@ -9,11 +9,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
+import { defineComponent, ref, inject, onMounted } from 'vue'
 import SimpleButton from '@/components/buttons/SimpleButton.vue'
 import Spinner from '@/components/indicators/Spinner.vue'
 import List from '@/components/lists/List.vue'
 import Modal from '@/components/modals/Modal.vue'
+import { messageRepositoryKey } from '@/symbols/messageRepositoryKey'
+import MessageRepository from '@/domain/repositories/messageRepository'
 export default defineComponent({
   components: {
     SimpleButton,
@@ -22,6 +24,10 @@ export default defineComponent({
     Modal,
   },
   setup() {
+    const messageRepository = inject<MessageRepository>(messageRepositoryKey)
+    if (messageRepositoryKey === undefined) {
+      throw `${messageRepositoryKey.toString()} is not provided`
+    }
     const modal = ref<InstanceType<typeof Modal>>()
     const openModal = () => {
       modal.value?.open()
