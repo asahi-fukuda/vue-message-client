@@ -13,7 +13,7 @@ import { defineComponent, PropType } from 'vue'
 export default defineComponent({
   props: {
     time: {
-      type: String as PropType<string>,
+      type: Date as PropType<Date>,
       required: true,
     },
     message: {

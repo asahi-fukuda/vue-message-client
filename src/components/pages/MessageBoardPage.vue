@@ -3,8 +3,8 @@
   p.title Simple Message Board
   .button
     SimpleButton(text="New Message" @click="openModal")
-  .list 
-    List
+  .list
+    List(:messages="state.messages")
   Modal(ref="modal")
 </template>
 
@@ -16,6 +16,7 @@ import List from '@/components/lists/List.vue'
 import Modal from '@/components/modals/Modal.vue'
 import { messageRepositoryKey } from '@/symbols/messageRepositoryKey'
 import MessageRepository from '@/domain/repositories/messageRepository'
+import useListMessagesState from '@/hooks/listMessages'
 export default defineComponent({
   components: {
     SimpleButton,
@@ -25,14 +26,22 @@ export default defineComponent({
   },
   setup() {
     const messageRepository = inject<MessageRepository>(messageRepositoryKey)
-    if (messageRepositoryKey === undefined) {
+    if (messageRepository === undefined) {
       throw `${messageRepositoryKey.toString()} is not provided`
     }
+
+    const { state, load } = useListMessagesState(messageRepository)
+
     const modal = ref<InstanceType<typeof Modal>>()
     const openModal = () => {
       modal.value?.open()
     }
+    onMounted(() => {
+      load()
+    })
     return {
+      state,
+      load,
       modal,
       openModal,
     }

@@ -1,16 +1,17 @@
-import axios, { Axios } from 'axios'
 import Message from '@/domain/models/message'
 import MessageRepository from '@/domain/repositories/messageRepository'
+import { DefaultApi } from '@/api'
 
 export default class ApiMessageRepository implements MessageRepository {
   async list(): Promise<Message[]> {
-    return axios.get('http://localhost:8080/messages', {}).then((res) => {
+    const api = new DefaultApi()
+    return api.getMessages().then((res) => {
       return res.data.map((row: any) => {
         return new Message({
           id: row.id,
           name: row.name,
           message: row.message,
-          postedAt: row.created_at,
+          postedAt: new Date(row.created_at),
         })
       })
     })
