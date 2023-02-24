@@ -16,4 +16,21 @@ export default class ApiMessageRepository implements MessageRepository {
       })
     })
   }
+
+  async save(message: Message): Promise<Message> {
+    const api = new DefaultApi()
+    const data = {
+      name: message.name || '',
+      message: message.message || '',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    }
+    const res = await api.createMessage(data)
+    return new Message({
+      id: res.data.id,
+      name: res.data.name,
+      message: res.data.message,
+      postedAt: new Date(res.data.created_at),
+    })
+  }
 }

@@ -24,6 +24,7 @@ export default defineComponent({
     List,
     Modal,
   },
+
   setup() {
     const messageRepository = inject<MessageRepository>(messageRepositoryKey)
     if (messageRepository === undefined) {
@@ -33,12 +34,15 @@ export default defineComponent({
     const { state, load } = useListMessagesState(messageRepository)
 
     const modal = ref<InstanceType<typeof Modal>>()
+
     const openModal = () => {
       modal.value?.open()
     }
+
     onMounted(() => {
       load()
     })
+
     return {
       state,
       load,
