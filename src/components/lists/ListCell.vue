@@ -1,7 +1,7 @@
 <template lang="pug">
 .list-cell
   .time 
-    div {{ time }}
+    div {{ formattedTime }}
   .message
     div {{ message }}
   .name 
@@ -24,6 +24,18 @@ export default defineComponent({
       type: String as PropType<string>,
       required: true,
     },
+  },
+  setup(props) {
+    const formattedTime = props.time.toLocaleDateString('ja-JP', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+    })
+    return {
+      formattedTime,
+    }
   },
 })
 </script>
