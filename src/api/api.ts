@@ -78,18 +78,6 @@ export interface NewMessage {
      * @memberof NewMessage
      */
     'message': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof NewMessage
-     */
-    'created_at': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof NewMessage
-     */
-    'updated_at': string;
 }
 
 /**

@@ -22,8 +22,6 @@ export default class ApiMessageRepository implements MessageRepository {
     const data: NewMessage = {
       name: message.name || '',
       message: message.message || '',
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
     }
     return api.createMessage(data).then(
       (res) =>
