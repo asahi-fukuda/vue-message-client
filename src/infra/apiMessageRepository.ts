@@ -1,6 +1,6 @@
 import Message from '@/domain/models/message'
 import MessageRepository from '@/domain/repositories/messageRepository'
-import { DefaultApi } from '@/api'
+import { DefaultApi, NewMessage } from '@/api'
 
 export default class ApiMessageRepository implements MessageRepository {
   async list(): Promise<Message[]> {
@@ -19,18 +19,20 @@ export default class ApiMessageRepository implements MessageRepository {
 
   async save(message: Message): Promise<Message> {
     const api = new DefaultApi()
-    const data = {
+    const data: NewMessage = {
       name: message.name || '',
       message: message.message || '',
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     }
-    const res = await api.createMessage(data)
-    return new Message({
-      id: res.data.id,
-      name: res.data.name,
-      message: res.data.message,
-      postedAt: new Date(res.data.created_at),
-    })
+    return api.createMessage(data).then(
+      (res) =>
+        new Message({
+          id: res.data.id,
+          name: res.data.name,
+          message: res.data.message,
+          postedAt: new Date(res.data.created_at),
+        })
+    )
   }
 }

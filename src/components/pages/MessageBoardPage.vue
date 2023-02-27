@@ -4,7 +4,7 @@
   .button
     SimpleButton(text="New Message" @click="openModal")
   .list
-    List(:messages="state.messages")
+    List(:messages="messages")
   Modal(ref="modal")
 </template>
 
@@ -16,7 +16,7 @@ import List from '@/components/lists/List.vue'
 import Modal from '@/components/modals/Modal.vue'
 import { messageRepositoryKey } from '@/symbols/messageRepositoryKey'
 import MessageRepository from '@/domain/repositories/messageRepository'
-import useListMessagesState from '@/hooks/listMessages'
+import useMessageList from '@/hooks/listMessages'
 export default defineComponent({
   components: {
     SimpleButton,
@@ -31,7 +31,7 @@ export default defineComponent({
       throw `${messageRepositoryKey.toString()} is not provided`
     }
 
-    const { state, load } = useListMessagesState(messageRepository)
+    const { messages, load } = useMessageList(messageRepository)
 
     const modal = ref<InstanceType<typeof Modal>>()
 
@@ -44,8 +44,7 @@ export default defineComponent({
     })
 
     return {
-      state,
-      load,
+      messages,
       modal,
       openModal,
     }

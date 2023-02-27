@@ -21,7 +21,7 @@ import { defineComponent, ref, inject } from 'vue'
 import SpinnerButton from '@/components/buttons/SpinnerButton.vue'
 import { messageRepositoryKey } from '@/symbols/messageRepositoryKey'
 import MessageRepository from '@/domain/repositories/messageRepository'
-import useSaveMessageState from '@/hooks/saveMessage'
+import useMessageList from '@/hooks/listMessages'
 export default defineComponent({
   components: {
     SpinnerButton,
@@ -32,7 +32,7 @@ export default defineComponent({
       throw `${messageRepositoryKey.toString()} is not provided`
     }
 
-    const { save: postMessage } = useSaveMessageState(messageRepository)
+    const { save: postMessage } = useMessageList(messageRepository)
 
     const spinnerButton = ref<InstanceType<typeof SpinnerButton>>()
 
@@ -49,7 +49,10 @@ export default defineComponent({
 
     const post = () => {
       spinnerButton.value?.progress()
-      postMessage({ name: name.value, message: message.value }).then(() => {
+      postMessage({
+        name: name.value,
+        message: message.value,
+      }).then(() => {
         spinnerButton.value?.onCompleted()
       })
       close()
