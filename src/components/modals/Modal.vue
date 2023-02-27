@@ -13,33 +13,53 @@
         input.input(v-model="message", type="text")
       .buttons
         button.cancel(@click="close") CANCEL
-        SpinnerButton(text="POST" @click="click2" ref="spinnerButton")
+        SpinnerButton(text="POST" @click="post" ref="spinnerButton")
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
+import { defineComponent, ref, inject } from 'vue'
 import SpinnerButton from '@/components/buttons/SpinnerButton.vue'
+import { messageRepositoryKey } from '@/symbols/messageRepositoryKey'
+import MessageRepository from '@/domain/repositories/messageRepository'
+import useMessageList from '@/hooks/listMessages'
 export default defineComponent({
   components: {
     SpinnerButton,
   },
   setup() {
+    const messageRepository = inject<MessageRepository>(messageRepositoryKey)
+    if (messageRepository === undefined) {
+      throw `${messageRepositoryKey.toString()} is not provided`
+    }
+
+    const { save: postMessage } = useMessageList(messageRepository)
+
     const spinnerButton = ref<InstanceType<typeof SpinnerButton>>()
+
     const name = ref('')
     const message = ref('')
     const isActive = ref(false)
+
     const open = () => {
       isActive.value = true
     }
     const close = () => {
       isActive.value = false
     }
-    const click2 = () => {
+
+    const post = () => {
       spinnerButton.value?.progress()
-      // spinnerButton.value?.onCompleted()
+      postMessage({
+        name: name.value,
+        message: message.value,
+      }).then(() => {
+        spinnerButton.value?.onCompleted()
+      })
+      close()
     }
+
     return {
-      click2,
+      post,
       spinnerButton,
       name,
       message,

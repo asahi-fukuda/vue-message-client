@@ -3,17 +3,20 @@
   p.title Simple Message Board
   .button
     SimpleButton(text="New Message" @click="openModal")
-  .list 
-    List
+  .list
+    List(:messages="messages")
   Modal(ref="modal")
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
+import { defineComponent, ref, inject, onMounted } from 'vue'
 import SimpleButton from '@/components/buttons/SimpleButton.vue'
 import Spinner from '@/components/indicators/Spinner.vue'
 import List from '@/components/lists/List.vue'
 import Modal from '@/components/modals/Modal.vue'
+import { messageRepositoryKey } from '@/symbols/messageRepositoryKey'
+import MessageRepository from '@/domain/repositories/messageRepository'
+import useMessageList from '@/hooks/listMessages'
 export default defineComponent({
   components: {
     SimpleButton,
@@ -21,12 +24,27 @@ export default defineComponent({
     List,
     Modal,
   },
+
   setup() {
+    const messageRepository = inject<MessageRepository>(messageRepositoryKey)
+    if (messageRepository === undefined) {
+      throw `${messageRepositoryKey.toString()} is not provided`
+    }
+
+    const { messages, load } = useMessageList(messageRepository)
+
     const modal = ref<InstanceType<typeof Modal>>()
+
     const openModal = () => {
       modal.value?.open()
     }
+
+    onMounted(() => {
+      load()
+    })
+
     return {
+      messages,
       modal,
       openModal,
     }
