@@ -1,22 +1,33 @@
-openapi: 3.0.1
+openapi: 3.0.3
 info:
-  version: 1.0.0
   title: Message API
-
+  version: 0.0.1
+  description: Message API
+servers:
+  - url: 'http://localhost:8080'
+    description: localhost
 paths:
+  /healthcheck:
+    get:
+      summary: ヘルスチェック
+      tags:
+        - template
+      responses:
+        '204':
+          description: No Content
+        '500':
+          $ref: '#/components/responses/ErrInternal'
+      operationId: healthcheck
+      description: ヘルスチェックを行う。
   /messages:
     get:
       summary: Get all messages
       operationId: getMessages
       responses:
         '200':
-          description: A list of all messages
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Message'
+          $ref: '#/components/responses/GetMessagesSuccess'
+        '500':
+          $ref: '#/components/responses/ErrInternal'
     post:
       summary: Create a new message
       operationId: createMessage
@@ -27,14 +38,18 @@ paths:
               $ref: '#/components/schemas/NewMessage'
       responses:
         '201':
-          description: The created message
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Message'
-
+          $ref: '#/components/responses/CreateMessagesSuccess'
+        '500':
+          $ref: '#/components/responses/ErrInternal'
 components:
   schemas:
+    ErrorDescription:
+      title: ErrorDescription
+      x-stoplight:
+        id: kfpjk8feu0hd4
+      type: object
+      description: エラー情報
+      x-examples: {}
     NewMessage:
       type: object
       properties:
@@ -67,3 +82,76 @@ components:
         - message
         - created_at
         - updated_at
+  responses:
+    ErrUnauthorized:
+      description: 認可できないリクエストを受け付けた場合のレスポンス
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                $ref: '#/components/schemas/ErrorDescription'
+            required:
+              - error
+    ErrBadRequest:
+      description: 入力値不正の場合のレスポンス
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                $ref: '#/components/schemas/ErrorDescription'
+            required:
+              - error
+          examples: {}
+    ErrInternal:
+      description: サーバエラーの場合のレスポンス
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                $ref: '#/components/schemas/ErrorDescription'
+            required:
+              - error
+    ErrNotFound:
+      description: リソースが見つからない場合のレスポンス
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                $ref: '#/components/schemas/ErrorDescription'
+            required:
+              - error
+    GetMessagesSuccess:
+      description: Message 一覧の成功レスポンス
+      content:
+        application/json:
+          schema:
+            type: object
+            description: Message 一覧の成功レスポンス
+            properties:
+              messages:
+                type: array
+                description: Message の配列
+                items:
+                  $ref: '#/components/schemas/Message'
+            required:
+              - messages
+    CreateMessagesSuccess:
+      description: Message 投稿成功レスポンス
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+                format: int64
+            required:
+              - id

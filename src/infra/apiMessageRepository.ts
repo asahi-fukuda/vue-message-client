@@ -6,7 +6,7 @@ export default class ApiMessageRepository implements MessageRepository {
   async list(): Promise<Message[]> {
     const api = new DefaultApi()
     return api.getMessages().then((res) => {
-      return res.data.map((row: any) => {
+      return res.data.messages.map((row: any) => {
         return new Message({
           id: row.id,
           name: row.name,
@@ -27,9 +27,6 @@ export default class ApiMessageRepository implements MessageRepository {
       (res) =>
         new Message({
           id: res.data.id,
-          name: res.data.name,
-          message: res.data.message,
-          postedAt: new Date(res.data.created_at),
         })
     )
   }
